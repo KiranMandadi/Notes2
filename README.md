@@ -1,32 +1,16 @@
-Accuracy investigation - these reports are used by directors and engineers, so findings must be
-correct and evidence must not mislead. Phase 0 = investigate and measure only; write
-docs/plans/accuracy-audit.md and stop. No code/profile changes; no branches, tags or commits; codes
-and counts only (no change text in chat or files).
-
-A. This case (CRQ000002456603), report only facts:
- 1. MF-03 fires "no backout to the previous package" although the Backout plan contains a standard
-    ChangeMan backout (Option B Backout, package id). Show exactly what text MF-03 received per field
-    after template stripping and any length limits, which terms it looked for, and why none matched.
-    Check specifically: (a) does template stripping remove the standard ChangeMan backout steps;
-    (b) where does "3,000 characters checked" come from - is any field truncated when read from Remedy,
-    stored in history, or passed to rules; (c) why is Deployment strategy searched for backout terms.
- 2. Same for MF-01 (LPAR/region/subsystem) on this change.
-
-B. Systematic audit across all active rules that report something "not found":
- 3. For each such rule, on the 16 pending and all past changes: how often it fires, and a near-miss
-    check - how often the searched fields contain related terms (synonyms, the rule's own words in
-    other forms, standard template procedures) that suggest the item IS present. Rank rules by
-    likely false-positive rate.
- 4. Measure template stripping: per template block, which rules lose matching text because of it.
- 5. Measure truncation: for every text field, max length in Remedy vs what we read/store/pass.
-
-C. Evidence wording (proposal only): replace "Not found in <field links>" with a clear statement, e.g.
-   "Looked for: a backout step that restores the previous package (e.g. ChangeMan backout, Endevor
-   restore). Searched: Backout plan, Notes - not found." Links go only to the searched fields; never
-   imply a searched field is missing. When a field IS filled, the report must never say it is missing.
-
-D. Safety principle (proposal): a "not found" finding can only be a Blocker when the rule is certain
-   (field empty, or definitive check). If the searched text is long and contains related terms, the
-   finding becomes "Please confirm: <item> - we could not find it clearly" at Minor/advisory. Show the
-   measured effect on statuses.
-Then stop with root causes, ranked rule list, and proposed fixes.
+Decisions on docs/plans/accuracy-audit.md:
+- AA1 yes - apply E now (I approve; pack owners are informed, not a blocker): add the strong terms to
+  MF-03, MF-06, MF-04, CFG-02, GEN-02, INF-07 and accept joined/hyphenated forms of multi-word terms.
+- AA2 yes (GEN-03 word forms). AA3 yes (remove Deployment strategy from look_in where it can never match).
+  AA4 yes (GEN-01 pattern on one line). AA5 yes (evidence wording C: "Looked for / Searched / not found",
+  looked_for per word group, no highlighted box for a search; same in Send to owner, brief, agents, JSON).
+- AA6: D1 after E - a strong near-miss in long searched text becomes "Please confirm: <item> - we could
+  not find it clearly", 0 points. Do NOT apply D3.
+- AA7: MF-01 - naming CICS/IMS/Db2 without a region name -> "Please confirm" (D1), until a mainframe owner
+  decides; add an open item.
+- AA8: open item - measure how often a Backout plan exists only as an attachment; no attachment reading yet.
+Build Phase 1 in the order E, F, G, C, then D1. Proof: per fix, before/after per rule and status split on
+all 6,461 past + 16 pending; every changed finding explained by its fix; crq rules validate with pass/fail
+examples for every new word; CRQ000002456603 shows no MF-03 and MF-01 as "Please confirm"; 5 spot-check
+ids per fix. Bump pack versions, new enterprise baseline, update catalogue/CHANGELOG, run
+python scripts/check.py --browser. No branches, tags or commits; then stop.
