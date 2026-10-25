@@ -1,48 +1,25 @@
-Comparison of past changes - redesign. Phase 0 = analysis, design and measurement only. Write
-docs/plans/comparison-key.md and stop. No code, profile or history changes; no branches, tags or
-commits; codes and counts only. There is NO human reviewer and no manual ground truth: the tool must
-decide automatically and deterministically (no AI/LLM) which past changes are comparable.
+Build Phase 1 of docs/plans/comparison-key.md together with two agreed UI changes.
+No branches, tags or commits; codes and counts only.
 
-Context: "service" in ChangeLens is Remedy's Product Name. A product can contain applications of
-different nature (mainframe, PCF, Java...), so comparing with every past change of the product mixes
-unrelated work. History must compare like with like.
+A. Comparison of past changes - accept CK1-CK9 as proposed:
+- CK1 chain: closest similar past changes of the product (min similarity 0.35, up to 30, at least 10);
+  else all past changes of the product; else "Not enough comparable past changes" with no history notes.
+- CK2/CK3 signals, weights, thresholds as in the plan; deterministic; reuse the history cache; no new
+  Remedy requests.
+- CK4 cohesion gate 0.3: hide task notes when the comparison set's tasks are not alike enough.
+- CK5 switch to closest set: history comparison rows (window, tasks, backout, deployment) and Create
+  suggestions (CK8). Keep the product for: CI notes, approval timing, platform pattern, overlap check,
+  product rule files, track record.
+- CK6 wording: "Compared with N similar past changes of <PRODUCT> (same team and CIs)"; when falling
+  back: "Compared with N past changes of the whole product (no closely similar changes found)"; with
+  Technical details on, list the signals used and the CRQ ids compared. Same on the Executive brief.
+- CK7 rename "Service" to "Product" in everything people read (header, At a glance, reports, brief,
+  Pending, Rules page, docs, agent instructions); code names may stay.
+- CK9 proof: scores, statuses and findings identical on all 6,461 + 16 reviews; only history sections may
+  change - report before/after counts per note type, and which changes fall back to product.
 
-1. Inventory - every use of "service"/product: the Remedy field behind it (field map, history map,
-   schema); history comparison rows, approval timing, platform service pattern, "last time this change
-   ran", overlap check, Pending grouping, track record, Create suggestions (backout, deployment,
-   affected services, task order), service rule files/suppressions/parameters, history cache keys,
-   agent instructions, report/brief wording ("Service" label).
-2. Mixing - number of products; per product: change count, identified-platform mix, implementer
-   support groups, operational tier 2 values; how many products are mixed (2+ groups with >=20% share).
-3. Design: closest past changes within the product. For each change, score every past change of the
-   same product using signals already in Remedy/history, e.g.: same implementer support group; overlap
-   of linked CIs (Impacts/Related, Jaccard); same identified platform/sub-type; same operational tiers;
-   summary similarity (existing text similarity, template text stripped); task-name overlap; similar
-   change class. Propose weights, a minimum similarity, and K (e.g. up to the 30 most similar, at least 10).
-   Must be deterministic, explainable and fast (reuse the history cache; no extra Remedy requests).
-4. Alternatives to compare against: (a) product only (today), (b) product + implementer support group,
-   (c) product + identified platform, (d) product + support group + platform, (e) primary Impacts CI
-   (define a deterministic pick), (f) the closest-K design from step 3.
-5. Measure each alternative WITHOUT manual labels:
-   - cohesion of the comparison set: spread of planned window (IQR/median), task-set similarity, share
-     with the same backout approach and deployment strategy, CI overlap;
-   - coverage: share of changes with >=10 comparable past changes;
-   - agreement between independent signals (support-group grouping vs CI grouping);
-   - leave-one-out check on past changes: how well each alternative's "usual" values (median window,
-     usual tasks, usual backout/deployment, approval p75) predict the change's own values;
-   - accuracy impact: on the 16 pending changes and 300 sampled past changes, how many history notes
-     (x-longer, missing/always-there, different, affected CIs, approval tight) appear, disappear or change.
-   - time added per report.
-6. Recommendation, decided by the measurements: the method, thresholds, and fallback chain (e.g.
-   closest-K if >=10 similar enough; else product + support group; else product; else "Not enough
-   comparable past changes" and no history notes). Rules:
-   - show history notes only when the comparison set is cohesive enough (threshold from the data);
-   - the report states what it compared with, e.g. "Compared with 24 similar past changes of <product>
-     (same team and CIs)"; with Technical details on, list the signals used and the CRQ ids compared;
-   - which features switch to the new method (history rows, approval timing, platform pattern, Create
-     suggestions, overlap check, service rule files) and which keep product;
-   - rename the "Service" label to "Product" wherever it means the product.
-7. Guardrails: history never changes score, status or rule-set id; no people stored; no new Remedy
-   requests; proof plan for Phase 1 (identical scores and findings on all 6,461 + 16 reviews; only history
-   sections may change, with a before/after count of each note type).
-Then stop for my decisions.
+B. UI: hide the "Track record" card on the Quality report and its one line on the Executive brief.
+   Keep the calculation (approval timing depends on it); switch it off with a setting, do not delete it.
+
+Update tests, docs (history.md, user-guide.md, contracts.md), the catalogue and CHANGELOG; bump the version;
+run python scripts/check.py --browser; restart is up to me. Then stop with the proof and file list.
