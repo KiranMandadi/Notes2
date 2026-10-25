@@ -1,16 +1,19 @@
-Decisions on docs/plans/accuracy-audit.md:
-- AA1 yes - apply E now (I approve; pack owners are informed, not a blocker): add the strong terms to
-  MF-03, MF-06, MF-04, CFG-02, GEN-02, INF-07 and accept joined/hyphenated forms of multi-word terms.
-- AA2 yes (GEN-03 word forms). AA3 yes (remove Deployment strategy from look_in where it can never match).
-  AA4 yes (GEN-01 pattern on one line). AA5 yes (evidence wording C: "Looked for / Searched / not found",
-  looked_for per word group, no highlighted box for a search; same in Send to owner, brief, agents, JSON).
-- AA6: D1 after E - a strong near-miss in long searched text becomes "Please confirm: <item> - we could
-  not find it clearly", 0 points. Do NOT apply D3.
-- AA7: MF-01 - naming CICS/IMS/Db2 without a region name -> "Please confirm" (D1), until a mainframe owner
-  decides; add an open item.
-- AA8: open item - measure how often a Backout plan exists only as an attachment; no attachment reading yet.
-Build Phase 1 in the order E, F, G, C, then D1. Proof: per fix, before/after per rule and status split on
-all 6,461 past + 16 pending; every changed finding explained by its fix; crq rules validate with pass/fail
-examples for every new word; CRQ000002456603 shows no MF-03 and MF-01 as "Please confirm"; 5 spot-check
-ids per fix. Bump pack versions, new enterprise baseline, update catalogue/CHANGELOG, run
-python scripts/check.py --browser. No branches, tags or commits; then stop.
+Time zone investigation - Phase 0 only; write docs/plans/timezone.md and stop. No code, profile or
+display changes; no branches, tags or commits; codes and counts only.
+1. Which time zone does each part use today, and where does it come from (Remedy API value, epoch/UTC,
+   the laptop's local zone, a setting)?
+   - reading dates from Remedy and storing them in history;
+   - display: header, At a glance, Overview, tasks, Work Detail, approvals, Pending, brief, prints/PDF,
+     Send to owner, "at the time of this report";
+   - rules: freeze calendar / CC-05, CC-07 weekend, MF-05 online day / batch critical path, CC-01 lead time
+     (working days), CC-06 window length, approval timing chip;
+   - history notes: start hour, weekday, window, approval percentiles; calendar.yaml periods.
+2. What Remedy actually returns for a date field (format and zone), checked on the 16 pending changes.
+3. Impact of moving everything to US Eastern (America/New_York, EDT/EST automatic): per rule and history
+   note, how many findings/notes would change on all 6,461 past + 16 pending changes, and the status split
+   before/after. List 5 spot-check ids per affected rule.
+4. Edge cases: changes spanning a daylight-saving switch, midnight boundaries, weekend start/end, freeze
+   periods defined in calendar.yaml (what zone are they written in?).
+5. Recommendation: display-only change, or display + rule fix; proposed setting in config/reports.yaml
+   (display_timezone) and whether rules need a separate rules_timezone.
+Then stop for my decision.
