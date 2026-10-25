@@ -1,25 +1,32 @@
-Build Phase 1 of docs/plans/comparison-key.md together with two agreed UI changes.
-No branches, tags or commits; codes and counts only.
+Accuracy investigation - these reports are used by directors and engineers, so findings must be
+correct and evidence must not mislead. Phase 0 = investigate and measure only; write
+docs/plans/accuracy-audit.md and stop. No code/profile changes; no branches, tags or commits; codes
+and counts only (no change text in chat or files).
 
-A. Comparison of past changes - accept CK1-CK9 as proposed:
-- CK1 chain: closest similar past changes of the product (min similarity 0.35, up to 30, at least 10);
-  else all past changes of the product; else "Not enough comparable past changes" with no history notes.
-- CK2/CK3 signals, weights, thresholds as in the plan; deterministic; reuse the history cache; no new
-  Remedy requests.
-- CK4 cohesion gate 0.3: hide task notes when the comparison set's tasks are not alike enough.
-- CK5 switch to closest set: history comparison rows (window, tasks, backout, deployment) and Create
-  suggestions (CK8). Keep the product for: CI notes, approval timing, platform pattern, overlap check,
-  product rule files, track record.
-- CK6 wording: "Compared with N similar past changes of <PRODUCT> (same team and CIs)"; when falling
-  back: "Compared with N past changes of the whole product (no closely similar changes found)"; with
-  Technical details on, list the signals used and the CRQ ids compared. Same on the Executive brief.
-- CK7 rename "Service" to "Product" in everything people read (header, At a glance, reports, brief,
-  Pending, Rules page, docs, agent instructions); code names may stay.
-- CK9 proof: scores, statuses and findings identical on all 6,461 + 16 reviews; only history sections may
-  change - report before/after counts per note type, and which changes fall back to product.
+A. This case (CRQ000002456603), report only facts:
+ 1. MF-03 fires "no backout to the previous package" although the Backout plan contains a standard
+    ChangeMan backout (Option B Backout, package id). Show exactly what text MF-03 received per field
+    after template stripping and any length limits, which terms it looked for, and why none matched.
+    Check specifically: (a) does template stripping remove the standard ChangeMan backout steps;
+    (b) where does "3,000 characters checked" come from - is any field truncated when read from Remedy,
+    stored in history, or passed to rules; (c) why is Deployment strategy searched for backout terms.
+ 2. Same for MF-01 (LPAR/region/subsystem) on this change.
 
-B. UI: hide the "Track record" card on the Quality report and its one line on the Executive brief.
-   Keep the calculation (approval timing depends on it); switch it off with a setting, do not delete it.
+B. Systematic audit across all active rules that report something "not found":
+ 3. For each such rule, on the 16 pending and all past changes: how often it fires, and a near-miss
+    check - how often the searched fields contain related terms (synonyms, the rule's own words in
+    other forms, standard template procedures) that suggest the item IS present. Rank rules by
+    likely false-positive rate.
+ 4. Measure template stripping: per template block, which rules lose matching text because of it.
+ 5. Measure truncation: for every text field, max length in Remedy vs what we read/store/pass.
 
-Update tests, docs (history.md, user-guide.md, contracts.md), the catalogue and CHANGELOG; bump the version;
-run python scripts/check.py --browser; restart is up to me. Then stop with the proof and file list.
+C. Evidence wording (proposal only): replace "Not found in <field links>" with a clear statement, e.g.
+   "Looked for: a backout step that restores the previous package (e.g. ChangeMan backout, Endevor
+   restore). Searched: Backout plan, Notes - not found." Links go only to the searched fields; never
+   imply a searched field is missing. When a field IS filled, the report must never say it is missing.
+
+D. Safety principle (proposal): a "not found" finding can only be a Blocker when the rule is certain
+   (field empty, or definitive check). If the searched text is long and contains related terms, the
+   finding becomes "Please confirm: <item> - we could not find it clearly" at Minor/advisory. Show the
+   measured effect on statuses.
+Then stop with root causes, ranked rule list, and proposed fixes.
