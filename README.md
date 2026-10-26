@@ -1,10 +1,8 @@
-Wording/display only - no rule logic, severity or score changes. Codes and counts only.
-1. CC-05: message and ribbon next-action name every restricted period the window covers, e.g.
-   "The window falls in the restricted periods 4 - 8 Nov and 11 - 15 Nov, when no changes may run."
-   More than 2: first two and "and N more". Evidence shows the restricted days covered (e.g.
-   "Restricted: 4-8 Nov, 11-14 Nov"), not the planned start. Same for the owner question.
-2. MF-05: if the evidence line would repeat the message, omit it. More than 2 online-day parts:
-   message shows the first two and "and N more online days"; evidence lists them all.
-Proof from an actual re-run: findings, scores and statuses identical on 6,461 past + 16 pending;
-wording diffs by rule code with counts. Run python scripts/check.py --browser; list files changed;
-then stop. No branches, tags or commits.
+Bug in CC-05 evidence (0.20.4): on 2478020 (Tue 3 Nov 20:00 -> Sat 14 Nov 22:00 ET) it shows
+"Restricted: 5-8 Nov", but the window covers all of Wed 4 Nov. Covered restricted days must be
+counted on Eastern calendar dates from the window's ET start to its ET end, inclusive of any day the
+window touches. Check the same for MF-05 online-day parts. Add tests: a window starting the evening
+before a restricted period; one ending just after midnight; one across the 1 Nov clock change.
+Report how many past/pending evidence lines change (counts only). Display only - findings, scores and
+statuses identical on 6,461 + 16. Run python scripts/check.py --browser; list files changed; stop.
+No branches, tags or commits.
