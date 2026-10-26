@@ -12,6 +12,10 @@ Wording/display only - no rule logic, severity or score changes. Codes and count
    Mon 2 Nov 07:00-12:30"); evidence shows those parts, not the planned start.
 6. Ribbon subtitle: "freeze clash, exception recorded" when an approved exception exists.
 7. At a glance: label "Overlaps" (one line), with hover "Same product, overlapping or within 1 hour".
+8. Technical details "satisfied" line: include the matched reason word and up to ~60 characters of
+   the sentence around it, escaped, e.g. "CC-06 satisfied - reason given in Notes: '...run longer
+   due to the holiday batch dependency...'". Display only; never in Send to owner or print unless
+   Technical details is on.
 Proof from an actual re-run: findings, scores and statuses identical on 6,461 past + 16 pending;
 wording diffs by rule code with counts. Run python scripts/check.py --browser; list files changed;
 then stop. No branches, tags or commits.
