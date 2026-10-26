@@ -1,11 +1,12 @@
-Check first - change no files. Codes and counts only, never change text.
-1. Urgency, Impact and Priority: show the full mapping from each Remedy value to what the report
-   displays (At a glance, finding messages, brief, Send to owner, crq JSON). Is 1-Critical shown as
-   High? Is any value collapsed or shifted?
-2. Which rules, checks or settings read the mapped/normalised value instead of the Remedy value
-   (e.g. CV-02, INF-03, Q-RISK-01, PCF-03, CC-05 freeze ceiling, X-04, risk thresholds)? For each,
-   is the result affected?
-3. Count, on 6,461 past + 16 pending: how many show a different level from Remedy for each of the
-   three fields; and how many would get different findings, scores or statuses if the rules used
-   the Remedy value.
-Then stop and wait for my OK. No branches, tags or commits.
+Approved. Display only - rules keep using the internal level; no finding, score or status changes.
+1. Everywhere a Urgency, Impact or Priority value is shown (At a glance, finding messages and
+   evidence, ribbon, Executive brief, Send to owner, print), show Remedy's own value exactly
+   (e.g. "1-Critical", "3-Moderate/Limited", "Critical"). Keep Risk level as "<Remedy number>
+   (<label>)". crq JSON: keep impact/urgency/priority as today and the *_remedy fields.
+2. Messages that quote a level use the Remedy value: CV-02 names only the fields that triggered,
+   e.g. "Urgency is 1-Critical and Priority is Critical. Say why the change needs them, or use a
+   lower level if it doesn't."; INF-03, PCF-03, CC-05, X-04 likewise.
+3. Proof from an actual re-run (not reasoning): findings, scores and statuses identical on
+   6,461 past + 16 pending; wording diffs by rule code with counts.
+Update docs/contracts.md. Run python scripts/check.py --browser; list files changed; then stop.
+No branches, tags or commits.
