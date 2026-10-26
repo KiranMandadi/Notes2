@@ -1,15 +1,17 @@
-Check only, then fix if needed: does shared mode work the same on Windows, macOS and Linux?
-1. cr_core/ui/addresses.py: how does it list interface addresses on each OS? It must work on all
-   three with the standard library only (no ifconfig parsing assumptions); fall back safely
-   (hostname + 127.0.0.1) and never crash or list an address the machine doesn't have.
-2. Default launch: confirm `crq ui` with the enterprise profile starts shared (0.0.0.0:8765) on all
-   three, and `--local` gives today's behaviour.
-3. Headless server (Linux VM, no browser): `crq ui` must not fail if no browser is available; add
-   `--no-open` if missing and say so in the start output.
-4. Credentials: confirm the keychain / Windows Credential Manager / Linux (secret service or
-   documented fallback) path for the read-only account works without a desktop session; if not,
-   say what's needed (no password in plain files).
-5. Tests: simulate each OS (mock platform + interface data) for discovery and Host check; mark any
-   test that can only run on one OS.
-Report per OS (works / needs change). Fix only what's needed; run python scripts/check.py --browser;
-list files changed; stop. No branches, tags or commits.
+Wording/display only - no rule logic, severity or score changes. Codes and counts only in your reply.
+1. CC-05 message and ribbon next-action: period name in lowercase mid-sentence ("the restricted
+   period 4 - 8 Nov"); capitalise only when it stands alone as a label.
+2. History comparison, when nothing differs: "This change matches its <N> similar past changes on
+   every point compared." (replaces "Nothing differs from the past changes compared with.").
+3. Q-VAGUE-01 when the field is Backout plan: fix text "Write the steps that return the service to
+   its previous state, or say why there is nothing to back out." (other fields keep today's fix).
+4. CV-10: fix names only the misaligned end(s) (first task's start and/or last task's end);
+   evidence shows task names with counts, e.g. "BATCH TEMP CHANGEMAN SPR x6, Certification Plan x6"
+   (same format as CV-09), never cut off mid-list.
+5. MF-05: message names every online-day part the window covers (e.g. "Fri 30 Oct 07:00-19:00 and
+   Mon 2 Nov 07:00-12:30"); evidence shows those parts, not the planned start.
+6. Ribbon subtitle: "freeze clash, exception recorded" when an approved exception exists.
+7. At a glance: label "Overlaps" (one line), with hover "Same product, overlapping or within 1 hour".
+Proof from an actual re-run: findings, scores and statuses identical on 6,461 past + 16 pending;
+wording diffs by rule code with counts. Run python scripts/check.py --browser; list files changed;
+then stop. No branches, tags or commits.
