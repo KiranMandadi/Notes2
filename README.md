@@ -1,5 +1,5 @@
-Check only - change no files. For CC-06 and MF-05: of the changes where the rule's condition is met
-(window over the limit / runs into the online day), how many are satisfied by a reason vs fire
-(past and pending, counts). Which reason words matched most often (top 10 words, counts). Then list
-10 past CRQ ids where CC-06 was satisfied and 10 for MF-05, spread across products, so I can read
-them in Remedy myself. Then stop. No branches, tags or commits.
+Check only - change no files. From the 18 ids you listed, mark which CC-06 / MF-05 passes rest only
+on "as" (ids only). Then measure in memory, counts only (past and pending, CC-06 and MF-05
+separately): (1) remove "as"; (2) also remove "required", "needs", "approved". For each: findings
+added, score changes, status changes (Ready -> Needs work, Needs work -> Blocked), and pending ids
+whose status changes. Then stop. No branches, tags or commits.
