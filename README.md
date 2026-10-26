@@ -1,13 +1,23 @@
-Approved with these changes, then build Phase 1:
-1. how_to_meet must never suggest lowering a rating to pass. Rewrite:
-   CC-05 "Plan the window outside the freeze period, or record the freeze exception that allows it."
-   CC-07 "Plan the window on a weekday, or say in a sentence about the window why it must run at the weekend."
-   CV-02 "Use the top levels only when the change really is that urgent or high-impact, and say why in the Notes."
-   CV-03 title "A risk level of 4 or 5 is confirmed"; how_to_meet "Check the answers to the risk questions; if the risk really is 4 or 5, confirm it in the Notes."
-   Raising a rating (X-04, INF-03, PCF-03, Q-RISK-01) is fine. INF-03: "If the change causes a reboot or outage, rate the impact Medium or higher."
-2. Q-COMPLETE-02 how_to_meet: "Fill in the Backout plan field with the steps that return the service to its previous state." (no Notes - that is what Q-COMPLETE-06 flags).
-3. Every how_to_meet must stand alone (it also appears in Send to owner without the title). Fix INF-06, PCF-05, X-05, MS-03 and any other "say so / give both / say it".
-4. Q-COMPLETE-01: use a placeholder for the configured required fields, like the other numbers.
-5. Decisions: (1) show GEN as Minor with "Planned to become Major after the platform review"; Effect on score in the panel uses the effective severity (-5). (2) MS-04 stays advisory; show "Not applied yet: Change Type isn't read" and add the open item. (3) yes. (4) yes, Q-RISK-04 wording as proposed.
-6. Owning-team count excludes "To be confirmed".
-Show me only the changed rows, then continue. Same ground rules and checks as before; no branches, tags or commits.
+Landing page polish - UI and wording only. No logic, backend, rule or scoring changes.
+1. Top bar: show Rules always, after Pending (Review · Pending · Rules). Inside the Rules page,
+   the rule-set id and sources stay behind Technical details.
+2. Footer on every page: remove "Runs only on this computer". Always show
+   "ChangeLens · history as of <date>" (date as "24 Oct 2026", Eastern time, same as reports).
+   With Technical details on, add "· rule set <id> · v<version>". Same footer on all pages.
+3. Button: "Generate" -> "Review change". Disabled until the number is valid, but still clearly a
+   button (contrast >= 3:1 for its outline/text). Enter submits.
+4. Input: autofocus the number box on load. Placeholder "000001234567". Keep "You can paste the
+   whole number."; show "CRQ followed by 12 digits" as a red inline error only after an invalid
+   entry (aria-describedby, aria-invalid).
+5. Feature cards, wording:
+   - Straight from Remedy: "...Nothing in Remedy is changed, and every value can be traced to the
+     Remedy field it came from."
+   - Ready in seconds: "A full quality report with clear next steps for each issue, or a one-page
+     executive brief for approvers. Both are ready to print or share."
+   Align each card icon with the first line of its title.
+6. Below the cards, one quiet row of two text links, always shown: "Review your team's pending
+   changes ->" (Pending) and "See the rules behind every score ->" (Rules).
+Keep the headline, subtitle, Open with switch and colours unchanged. Check at 1440 px and 760 px,
+Technical details on and off, and print; keyboard order: number box, Open with, Review change,
+links. Run python scripts/check.py --browser; list files changed; then stop. No branches, tags or
+commits.
