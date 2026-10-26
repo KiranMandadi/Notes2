@@ -1,6 +1,6 @@
-Quality report summary block, UI only: add back the light grey vertical dividers (1 px, same
-colour as the other card borders): one between the summary text and the counts (at the column
-boundary), and one between each of Blockers, Major and Minor. Full inner height of the card with
-a small top/bottom inset; tinted cells keep their inset box inside their divided cell. No other
-changes. Check 0/0/0, 1/2/3, 0/0/5 at 1440 px, 760 px (no dividers when stacked) and print.
+Quality report summary block, UI only: make the count cells symmetric. Each of Blockers, Major and
+Minor is an equal-width cell between dividers, with the same inner padding (about 12 px) on the
+left and right of every divider and at the card's right edge; the tinted box fills its cell inside
+that padding, so all three boxes are the same size and evenly spaced whether tinted or not. Same
+top/bottom inset for all. No other changes. Check 1/2/0, 0/0/0 and 0/2/3 at 1440 px and print.
 Run python scripts/check.py --browser; list files changed; then stop. No branches, tags or commits.
