@@ -1,19 +1,11 @@
-Build it with these decisions:
-1. No URL or hash state for any Pending filter (approver, organisation, coordinator group, status
-   chips): state lives in the page only; reload/Refresh returns to the default view.
-2. Approver search on logins only, exact match after trimming spaces and ignoring case; no partial
-   match, no pick list. Matches the login in APApprovers of pending rows (Approval Status2 =
-   Pending), including role rows whose expanded list contains it. Result chip: "Approver: <login> ·
-   N changes" (+ "(M via a role)" when any), with x to clear. No match: "No pending approval for
-   '<login>'." Text box + Find button; Enter does the same.
-3. Logins only - no CTM:People lookup. Console only: keep crq summary and the agents unchanged
-   (add waiting_on only to the Console's own pending answer).
-4. Combines with the organisation/group filters and status chips; header count, tiles, chips, table
-   and Print summary follow the filtered list.
-5. No approver login written to history.db, logs/, work/, reports or the debug log; the typed text
-   never leaves the browser.
-6. Correct docs/roadmap.md ("the Pending list does not read them yet") and the 0.13 open item;
-   update docs/user-guide.md and contracts.md.
-Tests: exact/case/space match, role match, no match, combined with filters, nothing in the URL.
-Proof: findings, scores and statuses identical. Run python scripts/check.py --browser; list files
-changed; stop. No branches, tags or commits.
+Build both now. Organisation and coordinator-group filters: "Organisation" drop-down (default "All
+organisations", then the organisations from support_groups.yaml in file order) and "Coordinator
+group" drop-down (first item "All coordinator groups", then that organisation's groups; disabled
+until an organisation is chosen; resets when the organisation changes). Options show pending counts
+("Settlement Systems Support (3)"); groups with 0 listed last and greyed. Client-side, applies
+instantly, page state only (no URL). The approver filter, status chips and these filters all
+combine; the header count and subtitle (e.g. "8 changes · Settlement Systems Support"), tiles, chips,
+table and Print summary follow the filtered list. "Clear filters" link when any filter is active.
+Empty result: "No pending changes match these filters." Report how many pending changes match no
+organisation in the yaml (expect 0). Labelled selects; keyboard order organisation -> group ->
+approver -> chips.
