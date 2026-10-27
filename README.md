@@ -1,4 +1,5 @@
-CC-04 message: capitalise "Standard" ("The change doesn't name the approved Standard change template
-it uses (for example its SCT number)."). Check every other message, fix text and owner question for
-"standard change" in lowercase and fix them the same way. Wording only; same proof; run
-python scripts/check.py; list files changed; stop. No branches, tags or commits.
+Check only: CC-04 fires on 2446585 in the live Console, but your proof says CC-04 fires on none of
+the 16 pending. Which pending set does the proof use (saved snapshot date vs live), and does the
+wording diff include sentences built from looked_for? If the snapshot is stale, refresh it (read-
+only) and re-run the proof; report CC-04 count and wording diffs. Codes and counts only; change no
+rule or report code. No branches, tags or commits.
