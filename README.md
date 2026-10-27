@@ -1,15 +1,25 @@
-Pending page, display only: the Brief button's "Opening..." state overflows and is clipped by the
-table card. Fix:
-1. Keep the label "Open" in every state; while loading, replace only the arrow with a small spinner
-   of the same size, so the button width never changes.
-2. Give the Brief column a fixed min-width that fits the button and its padding at 1440, 1280 and
-   760 px; nothing in that column may overflow the card (check with overflow visible in tests).
-3. While loading: disabled, aria-busy="true", aria-label "Opening <CRQ>"; a second click does
-   nothing. On error, restore "Open →" and show the existing error card, not text in the button.
-Add a browser test that clicks Open and checks the button stays inside the card. Run
-python scripts/check.py --browser; list files changed; stop. No branches, tags or commits.
-
+README and docs/setup-enterprise.md: Windows and company-network setup notes. Docs (plus the scan
+allow-list) only; no code changes.
+1. PowerShell: if Activate.ps1 is blocked ("running scripts is disabled on this system"), run
+   "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass" in that window (no admin, not
+   permanent), or use Command Prompt with .venv\Scripts\activate.bat.
+2. Package mirror: public PyPI is blocked on the company network. Inside the activated venv, before
+   installing, run:
+   python -m pip config --site set global.index-url <URL>
+   then python -m pip install -r requirements.lock and python -m pip install --no-deps -e .
+   Mirror credentials, if required, come from the user's own setup; never store them in the repo.
+3. Certificates: if pip reports CERTIFICATE_VERIFY_FAILED, set global.cert to the company
+   certificate bundle from IT (python -m pip config --site set global.cert <path>); if crq doctor
+   or crq login reports a certificate error reaching Remedy, set REMEDY_CA_BUNDLE=<path> in .env.
+   Never disable verification or use --trusted-host. No local file paths from my machine in the docs.
+4. Add a short symptom table: "running scripts is disabled" -> step 1; "from versions: none" or
+   403 -> step 2; "CERTIFICATE_VERIFY_FAILED" -> step 3.
+5. D4 in docs/open-items.md: add "pip mirror URL is an internal address; allowed in the internal
+   repo". Teach the sensitive-data scan to allow the configured mirror URL without exposing it.
+Re-run the sensitive-data scan (only the allowed entries may match) and python scripts/check.py;
+list files changed; stop. No branches, tags or commits.
 
 git add -A
-git commit -m "Pending page: day-based durations, stable Open button"
+git status --short
+git commit -m "Setup docs: Windows execution policy, company pip mirror and certificates"
 git push origin main
