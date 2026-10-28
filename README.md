@@ -1,24 +1,15 @@
-Research only - change no tool code, rules or packs. Work in work/research/ (git-ignored); write the
-summary to docs/research/history-rule-discovery.md with counts and rule codes only - no change text,
-no names, no CRQ ids in the doc (ids only in the work/ files). Read-only history.db; no Remedy calls.
-
-PHASE 0 - outcome data (then STOP and report):
-- Which outcome signals exist in history.db per change: closure status (Successful / Backed Out /
-  Failed / Cancelled), linked incidents within N days, reschedules or window changes, follow-up
-  Emergency changes on the same product. Counts per signal; how complete each is; date range.
-- Propose a "bad outcome" label from what exists, with counts.
-
-PHASE 1 - do today's rules predict outcomes? For every rule: bad-outcome rate when it fired vs not,
-ratio, counts, and the same within each risk level. Older changes vs the most recent quarter
-separately. Flag rules with no signal, and rules with strong signal.
-
-PHASE 2 - candidate patterns (deterministic, explainable only): field and Work Detail presence,
-task names/counts, CI links, text sections/keywords in Notes/Backout/Implementation plan, lead
-time, window length/day/hour, reschedules, approval timing, risk vs impact mismatch, and per product
-and coordinator group. Keep patterns with >= 50 changes and a clear rate difference that also holds
-in the most recent quarter and within risk levels.
-
-PHASE 3 - report: top 10-15 candidates, each as an evidence card: plain-language rule ("A change that
-... "), scope (global / group / product), counts and ratios, recent-quarter check, which existing
-rule it overlaps with, a suggested severity, and 5 example CRQ ids (work/ file only).
-Stop after each phase for my OK. No branches, tags or commits.
+Decisions:
+1. Strict = main outcome label, broad = check; a signal must point the same way in both.
+2. Rework (moved back to planning, 481) becomes a second primary label - analysed in Phase 1 and 2
+   alongside strict, never merged into it. Add reschedule (scheduled more than once, 601) as a
+   secondary process label.
+3. Leave out the follow-up Emergency signal.
+Phase 1 rules: compare within risk level (and Normal vs Standard); a signal needs >= 10 bad events on
+the fired side and the same direction in the most recent quarter (not significance there).
+Report per rule: fired/not counts, rates and ratio for strict, broad, rework, reschedule; mark
+"signal", "no signal (too few)", or "opposite".
+Also prepare (work/research only, ids allowed there): a review packet of the 138 strict bad changes -
+per change: CRQ, product, coordinator group, class, risk level, outcome type, the ChangeLens
+findings it got (codes), and which of the review questions it fails. Summary in the doc as counts
+only: how many bad changes had 0 findings, which rule codes fired most on them.
+Then stop for my OK. No branches, tags or commits.
