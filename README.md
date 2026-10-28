@@ -1,15 +1,16 @@
 Rules page, display only:
-1. Header tiles: three status tiles that add up - Active 60, Advisory 7, Retired 6 - plus a small
-   total "73 rules". Locked is not a separate tile: show "6 locked" as a sub-line on the Active tile
-   (with the lock icon and the existing tooltip). Counts come from the catalogue, never hard-coded.
-2. Filter count text: "In use" -> "Showing 67 of 73 · active and advisory"; "All" -> "Showing all
-   73"; Active/Advisory/Retired -> "Showing N of 73"; with search or severity filters the same
-   pattern with the filtered N.
-3. Legend under the tiles: "Rules with no status chip are active and count towards the score.
-   Locked rules can't be switched off by any group or product."
-4. Local rules section: state "Changes with no Product Name get only their coordinator group's local
-   rules." once (in the section description); remove the duplicate inside the card. The empty-state
-   line uses the same font size, weight and colour as other card body text.
-5. Check docs and the user guide say Advisory 7 (CC-08 added), not 6.
-Check 1440, 1024, 760 px and print. Run python scripts/check.py --browser; list files changed;
-stop. No branches, tags or commits.
+1. Purpose line: "What a good change does, rule by rule: when it applies, how much it counts and who
+   owns it." - no single-word last line at 1440 px (use text-wrap: balance or widen the block).
+2. Filter bar: Search, Severity and Status labels on one baseline; the three controls identical
+   height, border, radius and padding (same as the Pending filters). Browser test compares their
+   label positions and heights.
+3. Remove the floating "73 rules" next to the tiles; header line becomes
+   "73 rules · 13 rule packs · 7 owning teams".
+Check 1440, 1024, 760 px and print. Run python scripts/check.py --browser; list files changed; stop.
+No branches, tags or commits.
+
+
+git add -A
+git status --short
+git commit -m "0.24.x: MF-03 scope fix, MF-02 widened, CC-08 advisory, Rules page polish"
+git push origin main
