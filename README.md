@@ -1,13 +1,15 @@
-Rules page, display only:
-1. Purpose line: "What a good change does, rule by rule: when it applies, how much it counts and who
-   owns it." - no single-word last line at 1440 px (use text-wrap: balance or widen the block).
-2. Filter bar: Search, Severity and Status labels on one baseline; the three controls identical
-   height, border, radius and padding (same as the Pending filters). Browser test compares their
-   label positions and heights.
-3. Remove the floating "73 rules" next to the tiles; header line becomes
-   "73 rules · 13 rule packs · 7 owning teams".
-Check 1440, 1024, 760 px and print. Run python scripts/check.py --browser; list files changed; stop.
-No branches, tags or commits.
+Rules page header, display only - go back to the earlier layout:
+1. Four equal tiles in one row, top-aligned with the "Quality rules" title (as before 0.24.2):
+   Active 60 · Advisory 7 · Locked 6 · Retired 6. Locked tile keeps its own style, with a small
+   sub-label "of the 60 active" and the tooltip "Locked rules can't be switched off by any group or
+   product." Remove the "6 locked" sub-line from the Active tile.
+2. Legend under the tiles on ONE line, right-aligned: "Rules with no status chip are active and count
+   towards the score." (the locked sentence lives only in the Locked tile tooltip).
+3. Keep: the one-line purpose line, the defaults note, and "73 rules · 13 rule packs · 7 owning
+   teams" under the title. No floating "73 rules".
+4. Header height back to what it was before 0.24.2; no empty band above the tiles.
+Check 1440, 1024, 760 px (tiles wrap 2x2 at narrow widths) and print. Run python scripts/check.py
+--browser; list files changed; stop. No branches, tags or commits.
 
 
 git add -A
