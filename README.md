@@ -1,19 +1,40 @@
-Rules: move to the packs (one source of truth), display/wording only:
-1. Add the short Applies-to wording as each rule's applies_label in the pack files (GEN-01..06 and
-   any other row whose short label lives in page code); remove the page-code table. Side panel,
-   crq JSON and docs/rules-catalogue.md use the same label.
-2. CV-02 title: "Top levels of Urgency, Impact and Priority are justified" (why line unchanged).
-3. CL-03: move "Not applied yet: only mainframe is identified with confidence..." to a
-   Classification pack note; the row keeps only the "Not applied yet" chip.
-4. Status filter options: "In use" (default; active + advisory, retired folded per pack - today's
-   "Current"), "All" (every rule, retired shown inline, "Showing 72 of 72"), "Active", "Advisory",
-   "Retired". Rename "Current" to "In use" everywhere it appears (filter, docs/user-guide.md).
-Rule-set id may change; findings, scores and statuses must be identical on all past + pending
-(proof from an actual re-run). Re-record the enterprise baseline, regenerate the catalogue, run
-python scripts/check.py --browser, list files changed, stop. No branches, tags or commits.
+Local rules and suppressions at two levels: coordinator group and product. Plan first in
+docs/plans/local-rules-scopes.md, then STOP for my OK. No rule or score changes today.
 
+1. Today: describe how product (services/) files work - matching, suppressions, parameters,
+   S-<SERVICE>-NN local rules, approval and expiry checks, where they show on reports and the
+   Rules page.
 
-git add -A
-git status --short
-git commit -m "Rules page: Pending-style header and filters, quieter status column, labels in packs"
-git push origin main
+2. Proposal - scopes and precedence:
+   - New folder rules/groups/<file>.yaml keyed by the exact coordinator group name from
+     support_groups.yaml; product files stay keyed by the exact Remedy Product Name.
+   - Limits: product > group > global. Suppressions: a rule is off if the product OR the group
+     suppresses it (reports name which). Local rules: both apply.
+   - Locked rules can never be suppressed or relaxed at any level.
+   - Same governance at both levels: reason, approver (team + reference), expiry <= 6 months;
+     CODEOWNERS per file.
+   - Rule-set id covers group files too.
+
+2b. Local rules at both levels:
+   - Group rules G-<GROUP>-NN and product rules S-<PRODUCT>-NN, same YAML schema and existing
+     condition/search types as global rules (no code per rule); a change gets its group's and its
+     product's rules.
+   - They only add checks: they cannot modify, replace or weaken a global rule (loosening is a
+     suppression only).
+   - New local rules must start as Advisory (status shadow); crq rules measure reports how often
+     they fire on past changes; promotion to Active is a reviewed edit.
+   - Severity cap: Minor or Major only; Blocker is reserved for global packs.
+
+2c. Validation and display:
+   - crq rules validate errors on: a group/product name that matches nothing, duplicate rule ids,
+     expired suppressions, a locked rule suppressed, a limit outside its bounds, a local rule above
+     Major, a new local rule not starting as Advisory.
+   - Rules page: "Product rules and suppressions" becomes "Local rules and suppressions" with a
+     Scope column (Group: <name> / Product: <name>), plus reason, approver and expiry; local rules
+     listed under their scope.
+   - Reports and the brief: "Switched off for <scope> until <date>: <reason> (approved by <ref>)".
+     crq JSON: scope on each suppression and local rule.
+
+3. Tests and docs to add (rules-authoring.md, user guide, contracts, CODEOWNERS guidance); confirm
+   0 findings, scores or statuses change today (no files exist yet).
+No branches, tags or commits.
