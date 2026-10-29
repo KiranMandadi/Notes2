@@ -1,13 +1,5 @@
-Comparison pills, display only - Quality report "Compared with ... past changes" (Note column) and
-Executive brief "How this change differs from past ones" (This change column):
-1. Use the same chip component and size as the severity badges: 12 px, font-weight 600, height
-   22 px, padding 0 8 px, full radius, white-space: nowrap, vertically centred.
-2. Shorter labels; counts stay in the Usually / Past changes column: "About 2.9× longer",
-   "Often there", "Usually there", "Different", "Same".
-3. Colours: amber for differences worth checking (longer/shorter, missing, different); teal for
-   usual patterns (usually/often there); grey for same. No violet. Contrast >= 4.5:1.
-4. Brief: the pill sits on the same line as the value ("Missing  [Often there]"); wraps below only
-   at <= 760 px.
-Same in print. Browser test: pill height and font size equal the severity badge's, and no pill
-wraps at 1440 px. Run python scripts/check.py --browser; list files changed; stop. No branches,
-tags or commits.
+Executive brief, "How this change differs from past ones", display only: on screen the pill sits
+under the value (value on one line, white-space: nowrap; pill ~4 px below, left-aligned). In print,
+where the panel is full width, keep the pill beside the value. Quality report unchanged. Browser
+test: at 1440 and 1024 px the value never wraps and the pill is below it. Run python scripts/check.py
+--browser; list files changed; stop. No branches, tags or commits.
