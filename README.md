@@ -1,11 +1,11 @@
-History pills colour, display only: give every history comparison pill its own colour family,
-distinct from severity/status colours (no red, amber or green):
-- differences (About Nx longer/shorter, Different, Missing, Check): light-violet fill, dark violet
-  text;
-- usual patterns (Usually there, Often there): paler violet fill, dark violet text;
-- neutral (Same, Varies): grey outline, no fill.
-Applies to: Quality report comparison Note column, Executive brief "How this change differs" column,
-the brief's "Versus past changes" tile chip, "Last time this change ran", and print. Match the
-section's existing violet accent; contrast >= 4.5:1; same size/shape as the severity badges.
-Browser test: no history pill uses a severity colour. Run python scripts/check.py --browser; list
-files changed; stop. No branches, tags or commits.
+Report entry points, display/navigation only:
+1. First list every place in the Console that opens a change's report (button, link, calendar
+   block, recent reports, overlap links, print summary, error/empty cards, back navigation) and
+   which tab each opens today.
+2. Then: Pending Open button and calendar blocks open the Quality report tab. Rename the Pending
+   "Brief" column to "Report" (and its button label/aria-label "Open report for <CRQ>").
+3. Overlap CRQ links (At a glance, brief, anywhere else) open the same tab the reader is on.
+4. Landing page "Open with" switch unchanged.
+5. Any other entry point: Quality report by default; list what you changed.
+Update the user guide. Browser tests for each entry point's tab. Run python scripts/check.py
+--browser; list files changed; stop. No branches, tags or commits.
