@@ -1,7 +1,13 @@
-git status --short
+Then it’s just this, from the project folder on the VM:
 
-git add -A
-git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
+Stop the Console: Ctrl+C in its window, or end the Scheduled Task.
+Pull and refresh:
+   git pull origin main
+   .venv\Scripts\Activate.ps1
+   python -m pip install --no-deps -e .
 
-git commit -m "0.24.x: MF-03 scoped, MF-02 widened, CC-08 advisory, history research; Rules header, history pills, Quality report as default report view"
-git push origin main
+The pip line takes a few seconds. It makes sure the new version number and any new files are picked up.
+3. Start it again: crq ui, or run the Scheduled Task.
+4. Check the version: turn on Technical details and look at the footer.
+
+If the pull also changed requirements.lock, run python -m pip install -r requirements.lock as well. git pull lists the files it updated, so you’ll see whether it did.
