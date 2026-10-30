@@ -1,13 +1,11 @@
-   git status --short
-   git add -A
-   git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
-   git commit -m "0.26.0: accuracy audit fixes - Standard changes, safety pattern, reason sentences, word counts, scheduler names, CI types, one weight per rule; certifi upgrade; permanent audit check"
-   git push origin main
-
-
-
-Step 2 - measure only: proposal 8 ("Please confirm", 0 points) on top of the step-1 rules, for the
-rules listed, only where the verifier finds the item in the owner's other fields and nothing can
-settle it. The note must name where it was found, e.g. "A deployment tool is named in the Backout
-plan - please confirm it applies to the implementation." Exclude MF-01 and GEN-01. Report counts
-per rule, status changes, pending ids, and 5 example ids per rule (work/ only). Then stop.
+Decision: scenario A2 - "Please confirm" (0 points) for GEN-02, MF-02, GEN-03, MF-03, CC-04 as
+measured; NOT for CC-06, MF-05, CC-08 (weak signal); no scenario B. Each note names the field where
+the item was found.
+Before building, also:
+1. Add the Summary to the fields MF-03 and MF-02 search (a real fix, not a note); re-measure which
+   notes remain.
+2. Measure (don't apply yet): GEN-02's "rolling" no longer matching "rolling back/rollback", and
+   MF-06's "plan" no longer matching "test plan" - findings ADDED past/pending, status changes,
+   pending ids, 5 example ids each.
+Report the combined counts (fix 1 + A2) and the measurement for 2, then stop for my OK.
+No branches, tags or commits.
