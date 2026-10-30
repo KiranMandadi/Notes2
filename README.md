@@ -1,13 +1,7 @@
-Pending first-load speed - measure first, change nothing until I OK. Codes and timings only.
-1. Work Details paging: what page size is used now; the largest the Remedy API accepts; time the
-   Work Details read for the pending list at today's size vs the largest (requests and seconds).
-2. Concurrency: time the full Pending read at 4, 6 and 8 requests in flight; report any 429s,
-   errors or slower per-request times. Recommend the highest safe value.
-3. Background warm-up (shared mode only): propose reading Pending at Console start and every
-   pending_cache_minutes, only between configurable hours (default 07:00-20:00 ET, weekdays), with
-   the "as of" time; Refresh still forces a read; a failed background read keeps the last good
-   result and shows "as of <time> - last refresh failed"; never runs in local mode. Estimate Remedy
-   requests per day.
-4. Progressive load (d): estimated time to first rows with the best settings from 1-2.
-Report expected times: visitor in shared mode, Refresh, local first load. Then stop. No branches,
-tags or commits.
+Pending table column widths, display only (regression from 0.29.0's quality min-width):
+- Change takes the remaining width (about 38-40% at 1440 px), so summaries fit on one or two lines;
+- Window ~24%; Risk ~10%; Quality fixed 126 px min / ~12%; Report sized to its button, right-aligned;
+- no empty gap between Quality and Report at any width.
+Keep the 0.29.0 guarantee that nothing overflows its cell (re-run the width scan 760-1440 px) and the
+narrow layout at <= 825 px. Same widths with the sticky header. Run python scripts/check.py --browser;
+list files changed; stop. No branches, tags or commits.
