@@ -1,7 +1,5 @@
-Pending table column widths, display only (regression from 0.29.0's quality min-width):
-- Change takes the remaining width (about 38-40% at 1440 px), so summaries fit on one or two lines;
-- Window ~24%; Risk ~10%; Quality fixed 126 px min / ~12%; Report sized to its button, right-aligned;
-- no empty gap between Quality and Report at any width.
-Keep the 0.29.0 guarantee that nothing overflows its cell (re-run the width scan 760-1440 px) and the
-narrow layout at <= 825 px. Same widths with the sticky header. Run python scripts/check.py --browser;
-list files changed; stop. No branches, tags or commits.
+git add -A
+git status --short
+git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
+git commit -m "0.29.x: parallel Remedy reads, shared Pending result, sticky header, Back to top, column widths"
+git push origin main
