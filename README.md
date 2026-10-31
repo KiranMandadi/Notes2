@@ -1,4 +1,20 @@
-Overlaps by impacted component, any product. Scores, findings and statuses unchanged; no caching of
+reports/ housekeeping (D6), no change to report content:
+1. In shared mode, a Pending visit does not save a summary file unless the user clicks PDF (or an
+   explicit "Save" action); individual Quality/brief reports are saved only when opened, as today.
+2. Automatic clean-up: delete report files older than N days (setting report_retention_days,
+   default 14) at Console start and once a day; never delete anything outside reports/.
+3. Recent reports list shows only files that still exist.
+Tests; docs (operations, SECURITY.md data table); close D6. Run python scripts/check.py --browser;
+list files changed; stop. No branches, tags or commits.
+
+   git add -A
+   git status --short
+   git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
+   git commit -m "0.31.1: shared mode serves live Remedy data, no cached Pending result"
+   git push origin main
+
+
+   Overlaps by impacted component, any product. Scores, findings and statuses unchanged; no caching of
 Remedy data. Measure first, then stop for my OK.
 New definition: an overlap is any change of ANY product whose window overlaps this change's window
 or is within 1 hour, and that has at least one "Impacts" CI in common with this change. No product
