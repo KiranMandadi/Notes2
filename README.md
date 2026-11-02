@@ -1,21 +1,13 @@
-Add a diagnostic command `crq timing <CRQ>` (read-only, live): run one report and print time per stage
-- sign-in, each Remedy request (form, rows, seconds, new connection or reused), rule scoring, history
-comparison, overlap search, rendering. Also print: Python version, OS, history.db path type
-(local/network) and size; whether a proxy is in use (urllib getproxies, incl. Windows registry) and
-for the Remedy host; DNS lookup time and the address family used (IPv4/IPv6) for each new connection;
-TLS handshake time; total new connections vs requests. Codes and timings only, no change text.
-Document in operations.md. Run python scripts/check.py; list files changed; stop. No branches, tags or
-commits.
-
-
-git add -A
-git status --short
-git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
-git commit -m "Add crq timing diagnostic: per-stage and per-request timings, connection reuse, proxy, DNS/IPv6, TLS"
-git push origin main
-
-
-git pull origin main
-.venv\Scripts\Activate.ps1
-python -m pip install --no-deps -e .
-crq --version
+Intermittent 30 s+ reports (Mac and VM; random, even back-to-back). Likely one request hanging to
+the 30 s timeout. Diagnose first:
+1. Add `crq timing <CRQ> --repeat N` (N runs in one process, like the Console): per run print total
+   seconds and the slowest request (stage, endpoint, seconds, new/reused, timed out yes/no, retried
+   yes/no); at the end, a summary (min/median/max, number of runs over 10 s, timeouts).
+2. Check the code for: requests sent on a pooled connection the server already closed (no reply ->
+   waits full timeout); any lock that serialises requests on the shared session so one stuck request
+   blocks others; whether the concurrency limit can be held by a request that timed out; retries after
+   a timeout and their delay.
+3. Report findings, then propose fixes (e.g. short connect/read timeouts for idle-reused connections
+   with one safe retry on a fresh connection for GET only; never hold a lock while waiting on the
+   network; per-request timing in logs/crq-ui.log for any report over 5 s). Stop for my OK.
+Codes and timings only. No branches, tags or commits.
