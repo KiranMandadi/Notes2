@@ -1,21 +1,17 @@
-Approved - implement all three:
-1. Both parts: (a) evict pooled connections idle longer than a conservative threshold (setting,
-   default 15 s) before handing them out; (b) on a reused connection, first attempt gets a short read
-   timeout (setting, default 5 s) and on failure retries once immediately on a guaranteed-fresh
-   connection with the normal timeout - GET/idempotent only; create keeps today's rule (retry only if
-   nothing was sent). No backoff sleep before that fresh-connection retry.
-2. Sign-in: apply the same fast-fail + fresh retry inside the sign-in call so the token lock is held
-   only briefly.
-3. logs/crq-ui.log: for any report or Pending load over 5 s, one codes-only line with stage timings,
-   slowest request, new/reused, stale evicted, fast-retries, timeouts (no change text, no token).
-Also add the glob exclusions for cr_core/config.py and cr_core/history/config.py to every search you
-run (it was matched again).
-Proof: results identical on all past + pending; crq timing --repeat 15 before/after (I'll run both on
-Mac and VM). Run python scripts/check.py --browser --audit; list files changed; stop. No branches, tags
-or commits.
-
-git add -A
-git status --short
-git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
-git commit -m "Connection reliability: evict idle pooled connections, fast-fail and fresh retry on reused connections, fast sign-in, slow-report logging, crq timing --repeat"
-git push origin main
+Bug: from the landing page "Review change" and from Pending "Open", the browser stays on the current
+page with a loading state until the WHOLE report (including the overlap search) finishes - 27-29 s
+for CRQ000002364299 / CRQ000002447817. Progressive loading must apply on every entry point.
+1. Navigate to the report page immediately; show verdict, findings, At a glance and the brief as soon
+   as they are ready (~1 s); overlaps fill in afterwards ("Checking overlaps..."). /api/report must not
+   wait for the overlap search. Same for: calendar blocks, overlap links, Back/refresh, brief tab.
+   PDF stays disabled until overlaps arrive (as today).
+2. Batched overlap search: CHG:Associations queried per chunk of component ids (OR qualification,
+   chunk size setting default 20, under the length limit), same 9-month cutoff, deduped; windows read in
+   chunks of 40; list and chunk any other per-component loop. Keep the 20 s budget and "partly
+   checked" note.
+Measure before/after for CRQ000002364299, CRQ000002447817 and all pending, from each entry point: time
+to first content and total, requests per report (median/90th/max). Proof: overlap pairs identical
+(audit 100%), scores, findings and statuses identical. Browser test: landing search and Pending Open
+show the report within 3 s while overlaps are still loading. Exclude cr_core/config.py and
+cr_core/history/config.py from every search. Run python scripts/check.py --browser --audit; list files
+changed; stop. No branches, tags or commits.
