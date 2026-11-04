@@ -1,37 +1,19 @@
-   git add -A
-   git status --short
-   git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
-   git commit -m "0.39.0: reports open immediately from every entry point; overlaps load in the background; batched overlap search"
-   git push origin main
-
-   
-
-Add `crq ui --stop` and `crq ui --restart` (macOS, Windows, Linux):
-1. On start, the Console writes work/console/<port>.json (pid, port, mode, version, start time, random
-   secret), git-ignored, owner-only permissions; removed on clean shutdown.
-2. Local-only POST /api/shutdown (127.0.0.1/::1 only, requires the secret, never reachable from other
-   machines, not listed in the UI); finishes in-flight requests briefly, then exits.
-3. --stop: read the control file, call shutdown, wait until the port is free (timeout 15 s), report
-   the result. No control file / process gone: "No ChangeLens Console running on <port>". Port held by
-   a non-ChangeLens process: refuse and name it - never kill it.
-4. --restart: --stop, then start with the same mode and port (or the flags given).
-5. Never stop another user's Console; no force-kill unless --force and the pid matches the control file.
-6. Docs: operations.md and README - update steps become: git pull -> pip install --no-deps -e . ->
-   crq ui --restart; note that a Console run as a Windows Scheduled Task is restarted with schtasks
-   /End and /Run instead.
-7. Must work the same on macOS, Windows and Linux with the standard library only (no psutil or new
-   dependencies): owner-only file permissions per OS, process-alive check per OS, best-effort naming
-   of a foreign port holder (lsof / netstat+tasklist), never required.
-Tests: stop, restart, stale control file, foreign process on the port, shutdown refused from a
-non-local address and without the secret. Run them on this Mac and tell me the exact commands to
-verify on the Windows VM. Exclude cr_core/config.py and cr_core/history/config.py from every search.
-Run python scripts/check.py --browser; list files changed; stop. No branches, tags or commits.
-
+Pending table, display only: add a copy button next to each CRQ number in the Change column.
+1. Same copy icon/component as the report header's CRQ copy button; ~14 px, muted grey, 6 px after the
+   CRQ, vertically centred on the CRQ text, same line; darker on hover/focus; always visible.
+2. Click copies the full CRQ number; icon becomes a check with a "Copied" tooltip for 1.5 s; must not
+   open the change, select the row or trigger sorting (stopPropagation).
+3. Real <button>, aria-label "Copy <CRQ>", keyboard focusable with a visible focus ring, aria-live
+   "Copied". Hidden in print/PDF.
+4. Reuse exactly the report header's copy mechanism (already works over http://<ip>:8765); don't
+   change the header.
+Browser test: copy works, row not opened, print hides it. Check 1440, 1024, 760 px. Run python
+scripts/check.py --browser; list files changed; stop. No branches, tags or commits.
 
 git add -A
 git status --short
 git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
-git commit -m "crq ui --stop and --restart: safe local shutdown via control file, cross-platform"
+git commit -m "Pending: copy button next to each CRQ number"
 git push origin main
 
 
