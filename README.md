@@ -1,3 +1,11 @@
+   git add -A
+   git status --short
+   git diff --cached --name-only | grep -E '^(work|reports|logs|\.venv)/|history\.db|(^|/)\.env$'
+   git commit -m "0.39.0: reports open immediately from every entry point; overlaps load in the background; batched overlap search"
+   git push origin main
+
+   
+
 Add `crq ui --stop` and `crq ui --restart` (macOS, Windows, Linux):
 1. On start, the Console writes work/console/<port>.json (pid, port, mode, version, start time, random
    secret), git-ignored, owner-only permissions; removed on clean shutdown.
