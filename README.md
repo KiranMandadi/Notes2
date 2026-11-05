@@ -1,11 +1,12 @@
-git status
-git add -A
-git commit -m "Pending 0.41.0: executive view (approver display name, View by tabs, column sort, Today/Tomorrow and freeze tags, sticky header, fallback to all approvers)"
-git push
+Research spike, read-only: can ChangeLens read the Change Risk Report's derived factors (especially "Maximum Application Priority/ORR Rating") for a change? No code changes to the product, no rules, no scoring changes.
 
+STANDING RULES: no git operations; never read, search or print cr_core/config.py or cr_core/history/config.py; never run crq login; never create or modify anything in Remedy (GET requests only); REMEDY_ALLOW_CREATE stays off; don't print, log or store passwords or tokens. In replies: form names, field IDs, field names, data types, counts and numeric values only. No change text, CI names, application names or people.
 
-cd C:\CodeBase\changelens
-crq ui --stop
-git pull
-pip install -e .
-crq ui
+1. Find how ChangeLens reads the risk question answers today (the Q-COMPLETE-07 source): which form, which fields, which query. Report the form name and field IDs.
+2. Read the field metadata of CHG:ChangeRiskReportDialog through the AR REST API (GET only). For each table field, report its source form and the columns' field IDs/names. If this server's REST version doesn't expose field metadata, say so and stop that step.
+3. For any candidate form found (the derived-factor results and the question answers), query it for ONE change given by me as the environment variable SPIKE_CRQ (don't print it). Report: row count, field IDs/names/types, and for the ORR row only the numeric derived value, risk value and weight. Confirm the rows match the dialog's sections (Questions, Derived Factors).
+4. CMDB route: for the same change, from the CI links ChangeLens already reads, find the application CIs and report which attribute holds Priority/ORR (class name, attribute name, value type, the value as a number). State whether it matches the derived value in step 3.
+5. Cost: time each new request (median of 3) and say how many extra requests per change each route needs, keeping within 4 requests in flight.
+6. Write findings to docs/research/orr-rating.md: both routes, field IDs, which reflects the assessment (snapshot) vs today's CMDB, request cost, risks (org-configured factors can change; missing assessments; changes with no application CI), and a recommendation. Add an open item in docs/open-items.md: "ORR rating: display only; any rule starts shadow."
+
+Report the counts and the file path. No branches, tags or commits.
