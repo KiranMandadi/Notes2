@@ -1,24 +1,33 @@
 Follow-ups on the executive Pending page (0.41.0). Same standing rules: no git operations; never read, search or print cr_core/config.py or cr_core/history/config.py; never run crq login; live data only; codes and counts only in replies.
 
-1. View card layout
-   - View by select: 10% narrower than now.
-   - Search box: 30% narrower than now.
-   - Tabs, search and Filters share one row when they fit (tabs left; search and Filters right). When they don't fit, search and Filters move together to the next row, right-aligned. Tabs never wrap around the search box; if the tabs alone exceed the width, they wrap as a group on their own rows.
-   - Check at 1440, 1280, 1024, 760 and 390 px, with small counts and with 3-digit counts (e.g. All 120, Medium 107).
+1. One-row view card
+   - Remove the stacked "VIEW BY" label. Use an inline compact select reading "View by: Risk ▾" (label inside or immediately left, same height as the tabs), 10% narrower than now.
+   - Order on one row: View by select, tabs, then search and Filters right-aligned. Tighten tab padding slightly if needed (keep 32 px min height and visible focus rings).
+   - Must fit on one row at 1440 px with 2-digit counts. If it doesn't fit (narrower screens, 3-digit counts), search and Filters move together to the next row; the select and tabs never split. Verify at 1440, 1280, 1024, 760 and 390 px with small and 3-digit counts; save screenshots to work/preview/.
 
-2. One approver setting, shown everywhere
-   - The Approver box in the Filters panel, the headline and the toggle link all reflect the same value.
-   - On load with the default approver applied: the box shows that login. "Show all approvers" empties the box; "Show only <login>" fills it with the default login.
-   - The fallback (default approver has nothing pending) leaves the box empty, consistent with all approvers being shown.
+2. Zero-count tabs
+   - A tab whose count is 0 stays visible (dimmed) but is not clickable: aria-disabled="true", no hover or pointer cursor, skipped by arrow-key navigation, and clicks do nothing. Its tooltip still shows the full Remedy value plus "· none pending".
+   - "All" is never disabled.
+   - If the selected tab drops to 0 (Refresh, approver change, search, filters, or scores arriving in Readiness), switch to All and keep the URL in step.
+   - In Readiness, "Checking" disappears once all scores have arrived, rather than showing 0.
 
-3. Typing an approver
-   - Find with a login: filter the full live pending list (all approvers) to that login, and set the headline to "Awaiting <login> · N changes". The toggle link then reads "Show all approvers".
-   - Find with an empty box: all approvers, headline "N changes for your groups". The toggle reads "Show only <default login>" if a default is configured; otherwise no toggle.
-   - Validate the login the same way as CHANGELENS_DEFAULT_APPROVER; on an invalid value show an inline message under the box and don't query.
-   - If a typed login has nothing pending, do NOT fall back to all approvers. Show the table empty state "Nothing is awaiting <login> right now." with a "Show all approvers" button. The automatic fallback applies only to the configured default on page load.
-   - Refresh keeps the current approver. Enter in the box triggers Find.
-   - The Filters badge counts the approver as an active filter when the box is non-empty.
+3. Restore the freeze tags in the Window column
+   - Bring back the previous pair: the freeze-clash tag and the freeze-exception tag, with the same wording, colours and conditions the page used before 0.41.0 and the same wording the Quality report uses for CC-05. Take both from CC-05's own result (no second overlap check): clash without approved exception → freeze tag (amber); clash with an approved exception → exception tag (as before); touching a boundary → no tag.
+   - Remove "Restricted period" if it now duplicates the freeze tag. Update decisions.md to replace the earlier tag rule.
+   - Keep Today/Tomorrow (scheduled start on today's / tomorrow's date in America/New_York, or the window already in progress for Today).
+   - Report, for the current live pending set (all approvers), counts only: rows expected Today, Tomorrow, freeze and exception vs rows showing each. They must match.
 
-4. Window column: at 1440 px a two-day window ("Mon 16 Nov 23:00 → Tue 17 Nov 05:00") stays on one line; adjust column widths (narrow Change slightly if needed). Wrapping is fine below 1280 px.
+4. Column sorting
+   - Sortable headers: Change (CRQ number), Window (start time), Risk (risk, then start), Quality (Blocked < Needs work < Ready, then score). Click toggles ascending/descending; aria-sort set; the arrow shows only on the active column.
+   - Default remains risk descending, then start ascending. Ties always break on start time ascending.
+   - The label reflects the active order, e.g. "Sorted by quality, lowest first", with a "Reset" link when not default.
+   - Quality is sortable only after all scores have arrived; until then its header is disabled with the tooltip "Available when quality checks finish". No row moves while scores load.
+   - Keep the sort in the URL (?sort=quality-asc) alongside ?view; Refresh and approver changes keep it.
+   - The PDF follows the current sort and states it.
 
-Add tests for: box filled on load, toggles keep the box in sync, typed login filters and updates the headline, empty typed login, invalid login, typed login with no results (no fallback), Refresh keeps the approver, the layout rules at the listed widths. Run the full suite and `python scripts/check.py --browser --audit`; report counts only. No branches, tags or commits.
+5. Tests and checks
+   - Add or update tests: layout at the listed widths; zero-count tabs not clickable or focusable, and the switch to All when the selected tab drops to 0; tag counts vs CC-05, including exception and boundary cases; each sort and direction; Quality disabled while loading; URL round-trip for view and sort.
+   - Update the CHANGELOG entry for 0.41.0 (no new version).
+   - Run the full suite and `python scripts/check.py --browser --audit`; report counts only.
+
+No branches, tags or commits.
