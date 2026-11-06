@@ -1,12 +1,14 @@
-Research spike, read-only: can ChangeLens read the Change Risk Report's derived factors (especially "Maximum Application Priority/ORR Rating") for a change? No code changes to the product, no rules, no scoring changes.
+Finish the ORR spike, read-only. Same standing rules: no git operations; never read, search or print cr_core/config.py or cr_core/history/config.py; never read .env; never run crq login; GET requests only; codes, field IDs, scale words and counts only in replies.
 
-STANDING RULES: no git operations; never read, search or print cr_core/config.py or cr_core/history/config.py; never run crq login; never create or modify anything in Remedy (GET requests only); REMEDY_ALLOW_CREATE stays off; don't print, log or store passwords or tokens. In replies: form names, field IDs, field names, data types, counts and numeric values only. No change text, CI names, application names or people.
+Context: the risk report shows three different things. (a) the ORR rating on Schwab's scale, e.g. "4 = Very High", shown as text in the CI Name / Field Value column; (b) that factor's risk value on the 1–5 scale, e.g. 5, which field 880001551 holds; (c) the Aggregate Risk Value, e.g. 3, which becomes the change's Risk Level. We will display (a), never (b) as "ORR".
 
-1. Find how ChangeLens reads the risk question answers today (the Q-COMPLETE-07 source): which form, which fields, which query. Report the form name and field IDs.
-2. Read the field metadata of CHG:ChangeRiskReportDialog through the AR REST API (GET only). For each table field, report its source form and the columns' field IDs/names. If this server's REST version doesn't expose field metadata, say so and stop that step.
-3. For any candidate form found (the derived-factor results and the question answers), query it for ONE change given by me as the environment variable SPIKE_CRQ (don't print it). Report: row count, field IDs/names/types, and for the ORR row only the numeric derived value, risk value and weight. Confirm the rows match the dialog's sections (Questions, Derived Factors).
-4. CMDB route: for the same change, from the CI links ChangeLens already reads, find the application CIs and report which attribute holds Priority/ORR (class name, attribute name, value type, the value as a number). State whether it matches the derived value in step 3.
-5. Cost: time each new request (median of 3) and say how many extra requests per change each route needs, keeping within 4 requests in flight.
-6. Write findings to docs/research/orr-rating.md: both routes, field IDs, which reflects the assessment (snapshot) vs today's CMDB, request cost, risks (org-configured factors can change; missing assessments; changes with no application CI), and a recommendation. Add an open item in docs/open-items.md: "ORR rating: display only; any rule starts shadow."
+1. Read CHG:ChangeRiskDerivedTemplateSelectionDerivedFactorsLookup ONCE, narrowly filtered to the "Maximum Application Priority/ORR Rating" factor (retry once on failure). Report the full ORR scale (number and word for every level) and the risk value each level maps to.
+2. State whether the mapping is one-to-one (each risk value comes from exactly one ORR level).
+   - If yes: the ORR label can be derived from field 880001551 with no extra request.
+   - If no: the ORR label must come from the derived-factors row's Field Value (400009800) on CHG:ChangeRiskDerivedFactors, 1 extra request per change. Describe how to parse it safely (number before "=", word after) and how often it fails to parse on the 73 pending changes.
+3. On the 73 pending changes: distribution of field 880001551 values (count per value, count empty); distribution of ORR labels from the derived-factors rows; and the number of changes where the two disagree under the mapping.
+4. Aggregate check: on the 73, recompute the Aggregate Risk Value from the derived-factor rows (risk value × weight) and compare it with the change's Risk Level (1000000180). Report the formula that matches (plain average? weighted? rounding rule?) and the match count. Also count the changes where ORR is the top level (e.g. Very High) but Risk Level is 3 or lower.
+5. Add all of this to docs/research/orr-rating.md under "ORR scale and mapping — to be confirmed by Kiran/Remedy team". No config changes.
+6. Explain why the skipped test count is now 31 (it was 28): list the 3 newly skipped tests and why they skip.
 
-Report the counts and the file path. No branches, tags or commits.
+Report counts only. No branches, tags or commits.
