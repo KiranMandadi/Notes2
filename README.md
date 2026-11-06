@@ -1,6 +1,13 @@
-One fix before I commit: when stepping in the overlay while the previous report is still being prepared (local mode allows one at a time), don't show the "A report is already being prepared" card. Instead show the target change's header with "Waiting for the previous report to finish…" and load it automatically as soon as the server is free. If the user steps again while waiting, only the latest target loads (no queue of skipped reports). No server changes, no new endpoints. Add a test that pressing › three times quickly ends on the third change with one load per change actually shown. Run the browser tests and audit; report counts. No branches, tags or commits.
+Update the git rules in .github/copilot-instructions.md. Replace the rule "If the user pastes git commands … do not run them" (and any rule that forbids all git operations) with this section, verbatim:
 
-git status
-git add -A
-git commit -m "Pending: Quality report overlay (completes the work described in 4a0e5be)" -m "Open, a row or a calendar bar opens the complete Quality report over Pending (the report page itself, embedded, same origin). Toolbar: Back (Esc), step through the list's order, Technical details, PDF, close. Pending kept exactly on close; focus and row highlight; ?open= history entry; session-only Viewed marks. Docs, 0.44.0. No rule, score, finding or status changes."
-git push
+## Git operations
+- Never run git on your own initiative. Read-only git (status, diff, log, show) is always allowed.
+- Run git add / commit / push only when the user explicitly asks in that message (e.g. "commit and push", or pastes the commands and says to run them).
+- Before committing: run `git status` and show the list of files. Stop and ask if any of these appear: .env, history.db, anything under work/, reports/ or logs/, or any file the current task didn't touch.
+- Stage files by name (`git add <files>`), never `git add -A` or `git add .`.
+- Use the commit message exactly as the user gives it. If none is given, propose one and wait for approval. Never add a "Co-authored-by" or any other trailer.
+- Push only to origin on the current branch. Never force-push, rebase, amend a pushed commit, reset, or delete anything.
+- Never create branches or tags unless the user asks for that specific branch or tag.
+- After pushing, report the commit hash and the files included; nothing else.
+
+Make only this edit and show me the diff. Don't run any git commands now.
