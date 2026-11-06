@@ -1,14 +1,27 @@
-Finish the ORR spike, read-only. Same standing rules: no git operations; never read, search or print cr_core/config.py or cr_core/history/config.py; never read .env; never run crq login; GET requests only; codes, field IDs, scale words and counts only in replies.
+Show the application ORR rating (display only). Read docs/research/orr-rating.md first. Same standing rules: no git operations; never read, search or print cr_core/config.py or cr_core/history/config.py; never read .env; never run crq login; GET requests only; REMEDY_ALLOW_CREATE stays off; codes and counts only in replies. No rule, score, finding or status may change.
 
-Context: the risk report shows three different things. (a) the ORR rating on Schwab's scale, e.g. "4 = Very High", shown as text in the CI Name / Field Value column; (b) that factor's risk value on the 1–5 scale, e.g. 5, which field 880001551 holds; (c) the Aggregate Risk Value, e.g. 3, which becomes the change's Risk Level. We will display (a), never (b) as "ORR".
+1. Reading
+   - Add field 880001551 (RF_App_PriorityORR) to the change's existing single GET; no new request. If the change field IDs are defined only in an excluded config file, stop and ask me how to add it.
+   - Mapping in a reviewed YAML (next to the other Remedy field mappings, not in code): 2→1 Low, 3→2 Medium, 4→3 High, 5→4 Very High.
+   - Empty → "Not assessed". Any other value (e.g. 1, 6) → "Not recognised" with the raw value in a tooltip, plus one log line (codes only). Never guess.
+   - Live only; no caching.
 
-1. Read CHG:ChangeRiskDerivedTemplateSelectionDerivedFactorsLookup ONCE, narrowly filtered to the "Maximum Application Priority/ORR Rating" factor (retry once on failure). Report the full ORR scale (number and word for every level) and the risk value each level maps to.
-2. State whether the mapping is one-to-one (each risk value comes from exactly one ORR level).
-   - If yes: the ORR label can be derived from field 880001551 with no extra request.
-   - If no: the ORR label must come from the derived-factors row's Field Value (400009800) on CHG:ChangeRiskDerivedFactors, 1 extra request per change. Describe how to parse it safely (number before "=", word after) and how often it fails to parse on the 73 pending changes.
-3. On the 73 pending changes: distribution of field 880001551 values (count per value, count empty); distribution of ORR labels from the derived-factors rows; and the number of changes where the two disagree under the mapping.
-4. Aggregate check: on the 73, recompute the Aggregate Risk Value from the derived-factor rows (risk value × weight) and compare it with the change's Risk Level (1000000180). Report the formula that matches (plain average? weighted? rounding rule?) and the match count. Also count the changes where ORR is the top level (e.g. Very High) but Risk Level is 3 or lower.
-5. Add all of this to docs/research/orr-rating.md under "ORR scale and mapping — to be confirmed by Kiran/Remedy team". No config changes.
-6. Explain why the skipped test count is now 31 (it was 28): list the 3 newly skipped tests and why they skip.
+2. Display (value format "4 – Very High")
+   - Quality report, "At a glance" → RISK group: add a row "Application ORR" directly under "Risk level". Semibold only for Very High; no colour. Tooltip: "Highest ORR of the impacted applications, from the change's risk assessment in Remedy. Shown for context; it doesn't affect the score." Empty → "Not assessed" in grey. Same row in the PDF.
+   - Executive brief: the same row in its risk area.
+   - Pending, Risk column second line: "Impact: Minor · ORR 4 – Very High" (the ORR part semibold for Very High, normal otherwise; no red). One line at 1440 px; it may wrap as a group below 1280 px. Same in phone cards and the PDF.
 
-Report counts only. No branches, tags or commits.
+3. Pending
+   - View by gains a fourth option, "ORR", with tabs Very High, High, Medium, Low (plus "Not assessed" only when non-zero). The default view stays Risk. The zero-count, URL and PDF rules apply as for the other views.
+   - Default sort becomes: risk descending, then ORR descending, then start ascending. Label: "Sorted by risk, then ORR, then start time". The Risk column sort uses the same tie-breakers.
+
+4. Docs: a decisions.md entry (ORR is display-only; source field and mapping; why ORR is the second sort key: Risk Level is 3 on 69 of 71 pending changes; Risk Level equals Remedy's Aggregate Risk Value, so no separate aggregate row). Two open items: "Confirm the ORR scale with the Remedy team (level 0/Undefined?)" and "Possible shadow check: risk assessment may be out of date when today's application Priority exceeds the recorded ORR (research: 25 of 73)". CHANGELOG and minor version bump.
+
+5. Tests: mapping (including empty and out-of-range values); label formatting; the At a glance row, the brief and the Pending display; ORR View by tabs and counts; the new sort order and its label; no scoring change (run the accuracy audit and confirm zero score differences). Run the full suite and `python scripts/check.py --browser --audit`; report counts only.
+
+No branches, tags or commits.
+
+git status
+git add -A
+git commit -m "Show application ORR rating (display only): At a glance, brief, Pending view and sort"
+git push
