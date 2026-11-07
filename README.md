@@ -1,79 +1,48 @@
-Review Decision for the change review meeting, and removal of "Send to owner". First read .github/copilot-instructions.md, docs/decisions.md and docs/open-items.md. Same standing rules: no git operations unless I ask; never read, search or print cr_core/config.py or cr_core/history/config.py; never read .env; never run crq login; GET requests only to Remedy; live data only; no rule, score, finding or status changes; codes and counts only in replies.
+Review Decision adjustments and Pending row layout. Same standing rules: no git operations unless I ask; never read, search or print cr_core/config.py or cr_core/history/config.py; never read .env; never run crq login; GET requests only to Remedy; live data only; no rule, score, finding or status changes; codes and counts only in replies.
 
-PART A: Remove "Send to owner" completely
-- Remove the button from the standalone Quality report, the overlay and anywhere else.
-- Remove everything that exists only for it: routes, handlers, templates, JS, CSS, config keys, email or message helpers, and agent or doc references.
-- Old config files that still contain its keys must load without error: ignore the key and log one warning.
-- Remove or rewrite its tests. Add a test that the old route returns 404 and no page shows the button.
-- Search the repo case-insensitively for "send to owner", "send_to_owner", "sendToOwner" and similar. Report what remains and why (past CHANGELOG entries stay as history).
+1. Remove "Move to next after deciding" completely.
+   - Remove the tick box, its sessionStorage setting, the 400 ms auto-step logic, and their tests and doc lines.
+   - Recording a decision only records it. The admin steps manually with ‹ › or ←/→. The A/N shortcuts stay.
 
-PART B: Review Decision (session-only)
+2. Move the decision controls off the table's results line into a slim bar above the table card, outside it, right-aligned:
+   "Review decisions · Decided N of M   [Copy Decisions]   Clear"
+   - "Review decisions": a small grey label.
+   - "Copy Decisions": a proper button (white, 1 px #CFD7E3 border, 34 px high, copy icon). Disabled with the tooltip "No decisions yet" when there are none.
+   - "Clear": a small link, with the existing confirm.
+   - The results line goes back to "Sorted by … · Showing X of N" plus the search only.
+   - The same bar sits above the calendar layout. On phone, it wraps under the View by panel, full width.
 
-B1. What it is
-- Label: "Review Decision". Values: Approve, Needs work; none means "Not decided".
-- It's a meeting record only: it never writes to Remedy and never affects scores, findings or status.
-- No notes field.
+3. Make decision pills distinct from the Quality status pills.
+   - Decision pills are outlined: white fill, 1 px border, coloured text and an icon.
+     - "✓ Approved": border #7CC4A0, text #1E6B45.
+     - "↻ Needs work": border #E8B266, text #8A4B08.
+     - Tooltip: "Review decision: Approved" or "Review decision: Needs work".
+   - Quality pills stay filled, as they are.
+   - The overlay's Approve and Needs work buttons use the same outlined style when selected, keeping the button labels "Approve" and "Needs work".
+   - Calendar dots use the decision border colours.
 
-B2. Storage
-- Keep decisions in sessionStorage for the current browser tab, keyed by change number, alongside the existing ✓ Viewed data.
-- They survive a refresh and are cleared when the tab closes.
-- Never send them to the server, never put them in the URL, never log them, and never store them anywhere else.
-- Make sure the overlay's embedded report and Pending share the same tab-scoped store.
+4. Pending Change cell: below the summary, add a small three-row grid with a fixed label column (about 64 px; labels 10 px, uppercase, #8592A8) and left-aligned values.
+   - CLASS: the class value.
+   - PRODUCT: the product, using the full remaining width of the Change column, one line. Use an ellipsis with the full name in a tooltip only if it still doesn't fit.
+   - DECISION: the outlined decision pill. With no decision, show a muted "Not decided" (12 px, #8592A8, no pill).
+   - Remove the decision pill from the CRQ line; that line keeps the number, the copy icon and "✓ Viewed".
+   - Use the same layout in the phone cards.
 
-B3. Control in the overlay and the standalone report (where "Send to owner" was)
-- "Review Decision" label with two buttons, Approve and Needs work (role="radiogroup"; each aria-pressed).
-- The selected button is filled: Approve #E3F4EA background with #1E6B45 text; Needs work #FDF0DC with #8A4B08. Unselected buttons are white with a #CFD7E3 border. Clicking the selected one again clears it.
-- Keyboard shortcuts A (Approve) and N (Needs work), but not while typing in an input.
-- "Move to next after deciding": a small tick box next to the control, on by default, remembered in sessionStorage.
-  - When on, recording a decision in the overlay shows the filled state for about 400 ms, then steps to the next change in the list's order, using the existing stepping (including the wait-for-previous-report behaviour).
-  - At the last change it stays put and shows "Last in list".
-  - The standalone report doesn't step.
-
-B4. Pending
-- Next to "✓ Viewed", show a decision pill with the same colours as B3: "Approve" or "Needs work". Nothing when not decided. Calendar bars get a small matching dot, and the tooltip includes the decision.
-- On the results line (with "Sorted by …", "Showing X of N" and the search), add:
-  - "Decided N of M" (M = changes in the current filtered list);
-  - a "Copy Decisions" button;
-  - a "Clear decisions" link, with a confirm dialog that clears all decisions for this tab.
-- Pills and the counter update immediately when the overlay closes, or when a decision is made in another view in the same tab.
-
-B5. Copy Decisions
-- Copies only changes that have a decision, from the current filtered list, grouped as all Approve first, then all Needs work, sorted by change number within each group.
-- Two columns: "Change number" (the full CRQ) and "Review Decision".
-- Write two clipboard formats at once:
-  - text/html: a clean table (header row, thin borders, no colours that clash in Outlook or Teams);
-  - text/plain: tab-separated, with a header line.
-- Use the same clipboard approach and fallback as the existing CRQ copy icon, which works on the VM opened by IP over plain http.
-- Afterwards, show a brief confirmation "Copied N decisions". With nothing decided, the button is disabled, with the tooltip "No decisions yet".
-
-B6. Protection against losing work
-- If any decision was made or changed since the last Copy Decisions, closing or reloading away from the tab shows the browser's leave-page warning.
-- Copying clears that pending state; any later change sets it again.
-
-B7. Accessibility
-- Visible focus rings; the pills and the counter are announced; the copy confirmation uses role="status".
-
-TESTS
-- Part A: no button, the old route returns 404, old config keys still load with a warning.
-- Decisions:
-  - recording, changing and clearing; the A/N keys, but not while typing;
-  - auto-advance on and off, and at the last change;
-  - persistence across a refresh, gone in a new tab;
-  - nothing in requests, the URL or logs.
-- Pending: the pills, the calendar dots and tooltips, "Decided N of M" with filters applied, Clear decisions with its confirm.
-- Copy Decisions:
-  - only decided changes, Approve group first, sorted by change number within each group;
-  - both clipboard formats and their exact contents;
-  - disabled when empty; the fallback path.
-- The leave-page warning fires only when there are uncopied decisions.
-- Run the full suite and `python scripts/check.py --browser --audit`; confirm zero score differences; report counts only.
-- Screenshots to work/preview/ at 1440 and 390 px: the overlay with the control, Pending with pills and the counter.
-
-DOCS
-- decisions.md:
-  - Send to owner removed;
-  - Review Decision is session-only, Approve/Needs work, no notes, never written to Remedy;
-  - auto-advance; Copy Decisions format; the leave-page warning.
-- Update SECURITY.md (decisions stay in the browser tab only), the user guide (the meeting workflow: open, decide with A/N, Copy Decisions, paste into email or Teams), README, CHANGELOG, and a minor version bump.
+5. Tests and docs.
+   - Tests:
+     - no auto-step remains;
+     - the bar's placement and states (empty, decided, Clear confirm) in the list and calendar layouts;
+     - decision pills distinct from quality pills;
+     - the CLASS / PRODUCT / DECISION grid, including "Not decided", a long product name with the tooltip, and the phone layout;
+     - the decision pill no longer on the CRQ line.
+   - Update decisions.md, the user guide and the CHANGELOG for this version (no new version).
+   - Run the full suite and `python scripts/check.py --browser --audit`; confirm zero score differences; report counts only.
+   - Screenshots to work/preview/ at 1440 and 390 px.
 
 Stop when done and report counts, plus the list of files changed. No branches, tags or commits.
+
+
+git status
+git add -A
+git commit -m "Pending: Review Decision bar above table, distinct decision pills, CLASS/PRODUCT/DECISION rows; remove auto-advance and Send to owner"
+git push
