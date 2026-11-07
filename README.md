@@ -1,35 +1,25 @@
-Fix the Class filter's checkbox states and note. Same standing rules; no git operations unless I ask.
+Two layout changes. Same standing rules: no git operations unless I ask; never read, search or print cr_core/config.py or cr_core/history/config.py; never read .env; live data only; no rule, score, finding or status changes; codes and counts only in replies.
 
-1. Each class row's tick means "included".
-   - "All classes" is ticked only when every class is included.
-   - It shows the indeterminate state (–) when only some are included, including the default of all except Standard.
-   - It is never unticked. Clicking "All classes" when it is ticked or indeterminate selects all; there is no "none" state.
+1. Pending Quality column: stack the score above the status pill.
+   - Line 1: the score as a plain number, 14 px, semibold, #1C2A42. No "/100" and no status colour on the number.
+   - Line 2: the existing status pill, slightly smaller (11 px text, 2 px × 8 px padding).
+   - Left-aligned, 4 px gap. While scores load, the existing "Checking…" placeholder takes the place of both lines.
+   - Narrow the Quality column from about 150 px to about 96 px and give the space to the Change column.
+   - Add the tooltip "Quality score out of 100" on the QUALITY column header.
+   - Same order in the phone cards. Sorting by Quality is unchanged.
 
-2. Zero-count rows are disabled: greyed, not clickable, skipped by the keyboard, with the tooltip "No pending changes with the current filters" and their tick shown faded. This applies in the default and "All" states too.
-   - Exception: in a custom selection (not the default, not "All"), a ticked row that drops to 0 stays enabled so it can be removed.
+2. Page width.
+   - Pending, Review and Rules: content max-width 1600 px (from 1280), centred, with a 32 px side margin (24 px below 1440 px wide).
+   - The dark header uses the same max-width and side margin, so the logo, title and buttons line up with the content edges.
+   - Pending: the extra width goes to the Change column only; the other columns keep their fixed widths.
+   - Quality report (standalone and in the overlay) and the Executive brief: content max-width about 1360 px, for readability.
+   - Phone layout unchanged. Check that nothing is wider than the window at 1280, 1440 and 1920 px, and that Window's lines still don't wrap.
 
-3. URL: no class parameter for the default; class=all for every class; an explicit list only for a custom selection. Old links whose explicit list equals every class are read as all.
-
-4. Apply the same tick, indeterminate and disabled model to the Organisation and Group popovers wherever they use "All …".
-
-5. Class popover note, above Done:
-   - When Standard isn't included: "Standard changes are not included by default." If N > 0, add on the same line: "(N hidden)".
-   - When Standard is included: "Standard changes are included."
-   - Remove the "pre-approved" wording everywhere it appears: the UI, the user guide and decisions.md.
-
-6. Tests:
-   - default state: indeterminate "All", zero rows faded and disabled, Normal enabled;
-   - "All" state: every row ticked, zero rows faded and disabled, URL class=all;
-   - custom selection where a ticked row drops to 0: still removable;
-   - an old URL with a full list;
-   - keyboard skipping;
-   - the note text in each state, and no "pre-approved" text anywhere.
-   Run the browser tests and the audit; report counts.
+3. Tests and docs: the stacked Quality cell (score, pill, Checking state, header tooltip, column width); max-widths per page at 1280, 1440 and 1920 px with no horizontal scroll; the header aligned with the content. Update the user guide screenshots and CHANGELOG (no new version). Run the browser tests and `python scripts/check.py --browser --audit`; report counts. Screenshots to work/preview/ at 1440 and 1920 px.
 
 No branches, tags or commits.
 
-
 git status
 git add -A
-git commit -m "Pending: Standard excluded by default, consistent filter checkbox states, zero-count values disabled, product wraps to two lines"
+git commit -m "Pending: stacked Quality column; wider page layout (1600 px lists, 1360 px report)"
 git push
